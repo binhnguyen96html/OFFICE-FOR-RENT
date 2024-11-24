@@ -1,18 +1,29 @@
-import { FaArrowRight } from "react-icons/fa";
-
 interface ButtonProps {
-    title: string;
+    title?: string,
+    children?: any,
+    bgColor?: string,
+    textColor?: string,
+    onClick?: () => void,
 }
 
-export default function Button({title}:ButtonProps){
+export default function Button({
+                                   title,bgColor= 'bg-cyan-900',
+                                   textColor='text-white',
+                                   children,
+                    onClick
+
+}:ButtonProps){
 
 
     return(
         <>
-            <button className='px-4 py-2 rounded text-center inline-flex items-center gap-2
-            bg-cyan-900 text-sm text-white'>
+            <button
+                className={`p-2 rounded text-center inline-flex items-center gap-2 text-sm 
+            ${bgColor} ${textColor}`}
+            onClick={onClick}
+            >
                 {title}
-                <FaArrowRight />
+                {children}
             </button>
         </>
     )

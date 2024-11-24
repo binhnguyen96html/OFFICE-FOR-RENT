@@ -1,19 +1,21 @@
 
 
 interface CheckBoxProps {
-    label: string;
+    label?: string;
+    bgColor?: string;
+    textColor?: string;
 }
 
-export default function CheckBox({label}: CheckBoxProps) {
+export default function CheckBox({label, bgColor='text-cyan-900', textColor='text-gray-900'}: CheckBoxProps) {
     return (
         <>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center">
                 <input
                     type="checkbox"
                     value=""
-                    className="w-4 h-4 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2"
+                    className={`w-4 h-4 ${bgColor} bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2`}
                 />
-                <label  className="ms-2 text-sm font-medium text-gray-900 ">
+                <label className={`ml-2 text-sm font-medium ${textColor}`}  >
                     {label}
                 </label>
             </div>
