@@ -1,12 +1,9 @@
 import {FaArrowRight, FaChevronLeft, FaEdit} from "react-icons/fa";
 import {FaCirclePlus} from "react-icons/fa6";
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import Button from "../components/Button";
 
-import {
-    useFindBuildingsQuery,
-    useGetBuildingsQuery,
-} from "../store/slices/buildingsApiSlice";
+import {useGetBuildingsQuery} from "../store/slices/buildingsApiSlice";
 import {Link} from "react-router-dom";
 import FormInputForSearch from "../components/FormInputForSearch";
 import {FormStateForInsert, FormStateForSearch, initialFormStateForSearch} from "../types/buildingTypes";
@@ -22,14 +19,31 @@ export default function RentManagement() {
     const [openSearch, setOpenSearch] = useState(true);
     const [form, setForm] = useState<FormStateForSearch>(initialFormStateForSearch);
     const [editBuildingModal, setEditBuildingModal] = useState(false);
+    const [districts, setDistricts] = useState([]);
+    const [currentBuildings, setCurrentBuildings] = useState([]);
 
     const {data: fetchedDistricts, error: fetchedDistrictsError, isLoading: fetchedDistrictsIsLoading} = useGetDistrictsQuery({});
-    // console.log("fetchedDistricts: ", fetchedDistricts)
+    // console.log(data)
+    const {data: allBuildings, error: allBuildingsError, isLoading:allBuildingsIsLoading} = useGetBuildingsQuery({});
+    console.log('allBuildings: ',allBuildings)
+    const [triggerSearch, {data: searchedBuildings, error: searchedBuildingsError, isLoading: searchedBuildingsIsLoading}] = useLazyFindBuildingsQuery();
+    console.log('searchedBuildings: ',searchedBuildings)
 
-    const {data: searchedBuildings, error: searchedBuildingsError, isLoading: searchedBuildingsIsLoading} = useFindBuildingsQuery(form);
-    // console.log('searchedBuildings: ',searchedBuildings)
-    // console.log('form: ', form)
+    useEffect(() => {
+        if(fetchedDistricts && fetchedDistricts.length > 0){
+            // const district_s = data.map((i:any) => i.name);
+            setDistricts(fetchedDistricts);
+        }
+    }, [fetchedDistricts]);
 
+    const fetchedAllBuildings = useCallback(() => {
+        setCurrentBuildings(allBuildings);
+    }, [])
+
+    // useEffect(() => {
+    //     setCurrentBuildings(searchedBuildings);
+    // }, [searchedBuildings]);
+    // console.log('currentBuildings: ',currentBuildings)
 
     const inputChangeHandler = (
         field: keyof FormStateForSearch | keyof FormStateForInsert,
@@ -39,35 +53,35 @@ export default function RentManagement() {
             ...curForm,
             [field]: enteredValue,
         }));
-        // console.log("form: ", form);
+        console.log("form: ", form);
     };
 
     const editBuildingHandler = (buildingId: number) => {
         console.log(buildingId)
     }
 
-    // const handleSubmitForSearch = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     console.log(form);
-    //
-    //     try {
-    //         // Use the trigger function instead of directly calling the hook
-    //         // const result = await triggerSearch(form).unwrap();
-    //         // console.log('result: ', result)
-    //
-    //         if (searchedBuildings) {
-    //             console.log('searchedBuildings:', searchedBuildings);
-    //             // setCurrentBuildings(searchedBuildings)
-    //         } else if (searchedBuildingsError) {
-    //             console.error('Search Error:', searchedBuildingsError);
-    //             toast.error("Failed to find buildings");
-    //         }
-    //     }catch(e){
-    //         console.error('Unexpected Error:', e);
-    //         toast.error("An unexpected error occurred");
-    //     }
-    //
-    // }
+    const handleSubmitForSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(form);
+
+        try {
+            // Use the trigger function instead of directly calling the hook
+            const result = await triggerSearch(form).unwrap();
+            console.log('result: ', result)
+
+            if (searchedBuildings) {
+                console.log('searchedBuildings:', searchedBuildings);
+                setCurrentBuildings(searchedBuildings)
+            } else if (searchedBuildingsError) {
+                console.error('Search Error:', searchedBuildingsError);
+                toast.error("Failed to find buildings");
+            }
+        }catch(e){
+            console.error('Unexpected Error:', e);
+            toast.error("An unexpected error occurred");
+        }
+
+    }
 
     return (
         <div>
@@ -100,9 +114,7 @@ export default function RentManagement() {
                 </div>
 
                 {openSearch && (
-                    <form className="p-6"
-                          // onSubmit={handleSubmitForSearch}
-                    >
+                    <form className="p-6" onSubmit={handleSubmitForSearch}>
                         <div className="md:grid grid-cols-2 gap-4">
                             <FormInputForSearch
                                 label={"Name"}
@@ -123,7 +135,7 @@ export default function RentManagement() {
 
                             {/*DISTRICTS*/}
                             <Dropdown
-                                data={fetchedDistricts}
+                                data={districts}
                                 field='districtCode'
                                 label='District'
                                 purpose='search'
@@ -241,9 +253,9 @@ export default function RentManagement() {
                             ))}
                         </div>
 
-                        {/*<div className="flex justify-end">*/}
-                        {/*    <Button type='submit' title="Search"><FaArrowRight/></Button>*/}
-                        {/*</div>*/}
+                        <div className="flex justify-end">
+                            <Button type='submit' title="Search"><FaArrowRight/></Button>
+                        </div>
                     </form>
                 )}
             </div>
@@ -296,25 +308,25 @@ export default function RentManagement() {
                     <tbody>
 
                     {
-                        searchedBuildingsIsLoading ? (
+                        allBuildingsIsLoading ? (
                             <tr>
                                 <td colSpan={12} className="text-center py-4">
                                     <Spinner/>
                                 </td>
                             </tr>
-                        ) : searchedBuildingsError ? (
+                        ) : allBuildingsError ? (
                             <tr>
                                 <td colSpan={12} className="text-center py-4">
                                     <Alert
                                         color="red"
                                         message="Error"
-                                        error={searchedBuildingsError}
+                                        error={allBuildingsError}
                                     />
                                 </td>
                             </tr>
                         ) : (
-                            searchedBuildings?.length > 0 ?
-                                (searchedBuildings.map((item: any) => (
+                            currentBuildings?.length > 0 && (
+                                currentBuildings.map((item: any) => (
                                     <tr
                                         key={item.id}
                                         className="bg-white border hover:bg-gray-100 even:bg-gray-50"
@@ -350,12 +362,7 @@ export default function RentManagement() {
                                             </div>
                                         </td>
                                     </tr>
-                                )))
-                                : (
-                                    <tr className="bg-white border hover:bg-gray-100 even:bg-gray-50">
-                                        <td colSpan={12} className="text-center py-4">Not Found Buildings</td>
-                                    </tr>
-                                ))
+                                ))))
                     }
 
                     </tbody>

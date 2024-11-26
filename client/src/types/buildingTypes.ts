@@ -1,3 +1,43 @@
+export interface FormStateForSearch {
+    name: string;
+    floorArea: string;
+    districtCode: string;
+    ward: string;
+    street: string;
+    numberOfBasement: string;
+    direction: string;
+    level: string;
+    rentAreaFrom: string;
+    rentAreaTo: string;
+    rentPriceFrom: string;
+    rentPriceTo: string;
+    managerName: string;
+    managerPhone: string;
+    assignedStaff: string;
+    rentType_s: string;
+}
+
+export const initialFormStateForSearch: FormStateForSearch = {
+    name: "",
+    floorArea: "",
+    districtCode: "",
+    ward: "",
+    street: "",
+    numberOfBasement: "",
+    direction: "",
+    level: "",
+    rentAreaFrom: "",
+    rentAreaTo: "",
+    rentPriceFrom: "",
+    rentPriceTo: "",
+    managerName: "",
+    managerPhone: "",
+    assignedStaff: "",
+    rentType_s: "",
+};
+
+
+
 export interface FormStateForInsert{
     name: string;
     street: string;

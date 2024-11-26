@@ -8,6 +8,7 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement>{
     field: keyof FormStateForInsert;
     value: any;
     required?: boolean,
+    type?: string;
 }
 
 export default function FormInputForInsert({
@@ -16,6 +17,7 @@ export default function FormInputForInsert({
     field,
     value,
     required = false,
+    type='text',
     ...props
 }: FormInputProps){
 
@@ -29,10 +31,11 @@ export default function FormInputForInsert({
                 </div>
 
                 <input
-                    className='col-span-5 border rounded w-full focus:outline-none focus:border focus:ring-2 focus:ring-green-900
+                    className='col-span-5 border border-gray-300 rounded w-full focus:outline-none focus:border focus:ring-1 focus:ring-green-900
                     px-2 text-xs'
                     value={value}
                     onChange={(e) => inputChangeHandler(field, e.target.value)}
+                    type={type}
                     {...props}
                 />
 

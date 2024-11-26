@@ -21,7 +21,12 @@ public class DistrictRepositoryImpl implements DistrictRepositoryCustom {
     @Override
     public List<DistrictEntity> findByIdIn(Set<Long> districtIds) {
         //List<DistrictEntity> results = new ArrayList<>();
-        String sql = "SELECT * FROM district WHERE id IN(" + StringUtils.join(districtIds, ",") + ")";
+        String sql = "";
+        if(districtIds.size() > 0) {
+            sql += "SELECT * FROM district WHERE id IN(" + StringUtils.join(districtIds, ",") + ")";
+        }else{
+            sql += "SELECT * FROM district";
+        }
         Query query = entityManager.createNativeQuery(sql.toString(), DistrictEntity.class);
         return query.getResultList();
     }

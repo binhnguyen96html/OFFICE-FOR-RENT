@@ -9,6 +9,7 @@ import com.example.server.entity.RentAreaEntity;
 import com.example.server.entity.RentTypeEntity;
 import com.example.server.repository.BuildingRepository;
 import com.example.server.repository.RentTypeRepository;
+import com.example.server.repository.custom.BuildingRepositoryCustom;
 import com.example.server.repository.custom.DistrictRepositoryCustom;
 import com.example.server.repository.custom.RentAreaRepositoryCustom;
 import com.example.server.repository.custom.RentTypeRepositoryCustom;
@@ -28,6 +29,9 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Autowired
     private BuildingRepository buildingRepository;
+
+    @Autowired
+    private BuildingRepositoryCustom buildingRepositoryCustom;
 
     @Autowired
     private DistrictRepositoryCustom districtRepositoryCustom;
@@ -77,6 +81,36 @@ public class BuildingServiceImpl implements BuildingService {
 
         buildingRepository.save(newBuilding);
         return buildingConverter.convertToDTO(newBuilding);
+    }
+
+    @Override
+    public List<BuildingDTO> findBuildings(Map<String, Object> params) {
+        List<BuildingDTO> results = new ArrayList<>();
+        List<BuildingEntity> buildingEntities = buildingRepositoryCustom.findBuildings(params);
+
+        Set<Long> districtIds = new HashSet<>();
+        buildingEntities.forEach(b -> {
+            districtIds.add(Long.valueOf(b.getDistrictId()));
+        });
+        Map<Long, DistrictEntity> districtById = processDistrictMap(districtIds);
+
+        for(BuildingEntity item: buildingEntities) {
+            List<RentAreaEntity> rentAreaEntities = rentAreaRepositoryCustom.findByBuilding_Id(item.getId());
+
+            List<RentTypeEntity> rentTypeEntities = rentTypeRepositoryCustom.findByBuilding_Id(item.getId());
+            //System.out.println("rentTypeEntities: " + rentTypeEntities);
+
+            results.add(
+                    buildingConverter.toSearchResponse(
+                            item,
+                            districtById.get(Long.valueOf(item.getDistrictId())),
+                            rentAreaEntities,
+                            rentTypeEntities
+                    ));
+        }
+
+        //results = buildingEntities.stream().map(item -> buildingConverter.convertToDTO(item)).collect(Collectors.toList());
+        return results;
     }
 
     @Override

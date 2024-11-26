@@ -1,8 +1,8 @@
 import Button from "../components/Button";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useGetDistrictsQuery} from "../store/slices/districtsApiSlice";
 import {buildingTypeData} from "../constants/buildingTypeData";
-import {FormStateForInsert, initialFormStateForInsert} from "../types/buildingTypes";
+import {FormStateForInsert, FormStateForSearch, initialFormStateForInsert} from "../types/buildingTypes";
 import Dropdown from "../components/Dropdown";
 import {useCreateBuildingMutation} from "../store/slices/buildingsApiSlice";
 import FormInputForInsert from "../components/FormInputForInsert";
@@ -12,26 +12,19 @@ import {LuAsterisk} from "react-icons/lu";
 
 export default function NewBuildingScreen(){
     const [form, setForm] = useState<FormStateForInsert>(initialFormStateForInsert);
-    const [districts, setDistricts] = useState([]);
     const [validationErrors, setValidationErrors] = useState({
         rentType_s: '',
         districtId: ''
     });
 
-    const {data, error, isLoading} = useGetDistrictsQuery({});
-    // console.log(data)
+    const {data: fetchedDistricts, error: fetchedDistrictsError, isLoading: fetchedDistrictsIsLoading} = useGetDistrictsQuery({});
+    // console.log("fetchedDistricts: ", fetchedDistricts)
 
     const [createBuilding, {isLoading: isLoadingForCreateBuilding}] = useCreateBuildingMutation();
 
-    useEffect(() => {
-        if(data && data.length > 0){
-            // const district_s = data.map((i:any) => i.name);
-            setDistricts(data);
-        }
-    }, [data]);
 
     const inputChangeHandler = (
-        field: keyof FormStateForInsert,
+        field: keyof FormStateForSearch | keyof FormStateForInsert,
         enteredValue: any,
     ) => {
 
@@ -137,7 +130,7 @@ export default function NewBuildingScreen(){
                                 </div>
                                 <div className='col-span-5'>
                                        <Dropdown
-                                           data={districts}
+                                           data={fetchedDistricts}
                                            field='districtId'
                                            inputChangeHandler={(field, value) => {
                                                inputChangeHandler(field, value);
@@ -159,12 +152,14 @@ export default function NewBuildingScreen(){
                                 inputChangeHandler={inputChangeHandler}
                                 field={"numberOfBasement"}
                                 value={form.numberOfBasement}
+                                type='number'
                             />
                             <FormInputForInsert
                                 label={"Floor Area"}
                                 inputChangeHandler={inputChangeHandler}
                                 field={"floorArea"}
                                 value={form.floorArea}
+                                type='number'
                             />
                             <FormInputForInsert
                                 label={"Direction"}
@@ -190,6 +185,7 @@ export default function NewBuildingScreen(){
                                 field={"rentPrice"}
                                 value={form.rentPrice}
                                 required={true}
+                                type='number'
                             />
                             <FormInputForInsert
                                 label={"Rent Price Description"}
@@ -210,7 +206,7 @@ export default function NewBuildingScreen(){
                                 value={form.carFee}
                             />
                             <FormInputForInsert
-                                label={"Motobike Fee"}
+                                label={"Motorbike Fee"}
                                 inputChangeHandler={inputChangeHandler}
                                 field={"motorbikeFee"}
                                 value={form.motorbikeFee}
@@ -298,6 +294,7 @@ export default function NewBuildingScreen(){
                                 inputChangeHandler={inputChangeHandler}
                                 field={"managerPhone"}
                                 value={form.managerPhone}
+                                type='number'
                             />
 
                             <FormInputForInsert
@@ -364,7 +361,7 @@ export default function NewBuildingScreen(){
 
                         <div className="mt-2 flex justify-end">
                             <Button
-                                title="Submit"
+                                title="Add Building"
                                 type='submit'
                             ></Button>
                         </div>
