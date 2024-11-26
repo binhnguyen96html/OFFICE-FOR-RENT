@@ -6,6 +6,16 @@ public class DistrictDTO {
     private String code;
     private String name;
 
+    // No-argument constructor
+    public DistrictDTO() {
+    }
+
+    public DistrictDTO(Long id, String code, String name) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

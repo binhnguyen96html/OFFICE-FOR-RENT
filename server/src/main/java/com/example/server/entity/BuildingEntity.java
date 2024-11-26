@@ -94,11 +94,13 @@ public class BuildingEntity extends BaseEntity {
     @Column(name = "managerphone")
     private String managerPhone;
 
+    @Column(name="rentareadescription")
+    private String rentAreaDescription;
 
-    @OneToMany(mappedBy = "building2", fetch= FetchType.LAZY)
+    @OneToMany(mappedBy = "building2", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<RentAreaEntity> rentAreas = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name="buildingrenttype",
             joinColumns = @JoinColumn(name="buildingid", nullable = false),
@@ -328,6 +330,14 @@ public class BuildingEntity extends BaseEntity {
 
     public void setManagerPhone(String managerPhone) {
         this.managerPhone = managerPhone;
+    }
+
+    public String getRentAreaDescription() {
+        return rentAreaDescription;
+    }
+
+    public void setRentAreaDescription(String rentAreaDescription) {
+        this.rentAreaDescription = rentAreaDescription;
     }
 
     public List<RentAreaEntity> getRentAreas() {

@@ -1,9 +1,7 @@
 package com.example.server.dto;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class BuildingDTO {
 
@@ -20,8 +18,8 @@ public class BuildingDTO {
     private Integer rentPrice;
     private String rentPriceDescription;
     private String serviceFee;
-    private String carfee;
-    private String motofee;
+    private String carFee;
+    private String motorbikeFee;
     private String overtimeFee;
     private String waterFee;
     private String electricityFee;
@@ -38,9 +36,12 @@ public class BuildingDTO {
     private String managerPhone;
     private String address;
 
+    private String rentType_s;
+    private String[] rentTypes = new String[]{};
 
-    private List<RentTypeDTO> rentTypes = new ArrayList<>();
-    private List<RentAreaDTO> rentAreas = new ArrayList<>();
+    private String rentAreaDescription;
+    private String rentArea_s;
+    private String[] rentAreas = new String[]{};
 
     private Date createdDate;
     private Date modifiedDate;
@@ -151,20 +152,20 @@ public class BuildingDTO {
         this.serviceFee = serviceFee;
     }
 
-    public String getCarfee() {
-        return carfee;
+    public String getCarFee() {
+        return carFee;
     }
 
-    public void setCarfee(String carfee) {
-        this.carfee = carfee;
+    public void setCarFee(String carFee) {
+        this.carFee = carFee;
     }
 
-    public String getMotofee() {
-        return motofee;
+    public String getMotorbikeFee() {
+        return motorbikeFee;
     }
 
-    public void setMotofee(String motofee) {
-        this.motofee = motofee;
+    public void setMotorbikeFee(String motorbikeFee) {
+        this.motorbikeFee = motorbikeFee;
     }
 
     public String getOvertimeFee() {
@@ -287,19 +288,43 @@ public class BuildingDTO {
         this.address = address;
     }
 
-    public List<RentTypeDTO> getRentTypes() {
+    public String getRentType_s() {
+        return rentType_s;
+    }
+
+    public void setRentType_s(String rentType_s) {
+        this.rentType_s = rentType_s;
+    }
+
+    public String[] getRentTypes() {
         return rentTypes;
     }
 
-    public void setRentTypes(List<RentTypeDTO> rentTypes) {
+    public void setRentTypes(String[] rentTypes) {
         this.rentTypes = rentTypes;
     }
 
-    public List<RentAreaDTO> getRentAreas() {
+    public String getRentAreaDescription() {
+        return rentAreaDescription;
+    }
+
+    public void setRentAreaDescription(String rentAreaDescription) {
+        this.rentAreaDescription = rentAreaDescription;
+    }
+
+    public String getRentArea_s() {
+        return rentArea_s;
+    }
+
+    public void setRentArea_s(String rentArea_s) {
+        this.rentArea_s = rentArea_s;
+    }
+
+    public String[] getRentAreas() {
         return rentAreas;
     }
 
-    public void setRentAreas(List<RentAreaDTO> rentAreas) {
+    public void setRentAreas(String[] rentAreas) {
         this.rentAreas = rentAreas;
     }
 

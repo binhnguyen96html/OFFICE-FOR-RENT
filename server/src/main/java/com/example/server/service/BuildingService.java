@@ -8,4 +8,5 @@ import java.util.List;
 public interface BuildingService {
     List<BuildingDTO> getBuildings();
 
+    BuildingDTO save(BuildingDTO buildingDTO);
 }

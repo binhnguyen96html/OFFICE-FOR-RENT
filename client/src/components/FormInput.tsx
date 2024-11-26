@@ -1,19 +1,22 @@
-import {FormState} from "../screens/RentManagement";
-
+import {FormStateForInsert} from "../types/buildingTypes";
 
 interface FormInputProps {
     label: string;
-    inputChangeHandler: (field: keyof FormState, enteredValue: string | Array<string>) => void
-    name: keyof FormState;
-    value: string;
+    inputChangeHandler: (field: keyof FormStateForInsert, enteredValue: any) => void;
+    field: keyof FormStateForInsert;
+    value: any;
+    required?: boolean,
 }
+
+type currentFormInputProps = FormInputProps;
 
 export default function FormInput({
     label,
     inputChangeHandler,
-    name,
+    field,
     value,
-}: FormInputProps){
+    ...props
+}: currentFormInputProps){
 
 
     return(
@@ -23,7 +26,8 @@ export default function FormInput({
                 <input
                     className='border rounded w-full focus:outline-none focus:border focus:ring-2 focus:ring-green-900'
                     value={value}
-                    onChange={(e) => inputChangeHandler(name, e.target.value)}
+                    onChange={(e) => inputChangeHandler(field, e.target.value)}
+                    {...props}
                 />
 
             </div>

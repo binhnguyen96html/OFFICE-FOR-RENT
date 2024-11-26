@@ -9,9 +9,18 @@ export const buildingsApiSlice = apiSlice.injectEndpoints({
             }),
             keepUnusedDataFor: 5,
         }),
+        createBuilding: builder.mutation({
+           query: (data) => ({
+               url: `${BUILDING_URL}`,
+               method: 'POST',
+               body: data,
+           }),
+            invalidatesTags: ['Buildings']
+        })
     })
 })
 
 export const {
-    useGetBuildingsQuery
+    useGetBuildingsQuery,
+    useCreateBuildingMutation,
 } = buildingsApiSlice;

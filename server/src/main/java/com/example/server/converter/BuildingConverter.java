@@ -2,8 +2,6 @@ package com.example.server.converter;
 
 import com.example.server.dto.BuildingDTO;
 import com.example.server.dto.DistrictDTO;
-import com.example.server.dto.RentAreaDTO;
-import com.example.server.dto.RentTypeDTO;
 import com.example.server.entity.BuildingEntity;
 import com.example.server.entity.DistrictEntity;
 import com.example.server.entity.RentAreaEntity;
@@ -39,14 +37,16 @@ public class BuildingConverter {
     ) {
         BuildingDTO buildingDTO = modelMapper.map(buildingEntity, BuildingDTO.class);
         DistrictDTO districtDTO = districtConverter.convertToDTO(districtEntity);
-        List<RentAreaDTO> rentAreaDTOs = rentAreaEntities
-                .stream()
-                .map(i -> rentAreaConverter.convertEntityToDTO(i))
-                .collect(Collectors.toList());
-        List<RentTypeDTO> rentTypeDTOs = rentTypeEntities
-                .stream()
-                .map(i -> rentTypeConverter.convertEntityToDTO(i))
-                .collect(Collectors.toList());
+
+//        List<RentAreaDTO> rentAreaDTOs = rentAreaEntities
+//                .stream()
+//                .map(i -> rentAreaConverter.convertEntityToDTO(i))
+//                .collect(Collectors.toList());
+
+        String[] rentAreaDTOs = rentAreaEntities.stream().map(i -> i.getValue().toString()).collect(Collectors.toList())
+                .toArray(new String[0]);
+
+        String[] rentTypeDTOs = rentTypeEntities.stream().map(i -> i.getName()).collect(Collectors.toList()).toArray(new String[0]);
 
         buildingDTO.setAddress(buildingDTO.getStreet() +", "+ buildingDTO.getWard() +", "+districtDTO.getName());
         buildingDTO.setRentAreas(rentAreaDTOs);
