@@ -10,6 +10,12 @@ export const buildingsApiSlice = apiSlice.injectEndpoints({
             }),
             keepUnusedDataFor: 5,
         }),
+        getBuildingById: builder.query({
+            query: (buildingId) => ({
+                url: `${BUILDING_URL}/${buildingId}`,
+                method: 'GET',
+            })
+        }),
         findBuildings: builder.query({
             query: (params) => ({
                 url: `${BUILDING_URL}/search?${qs.stringify(params)}`,
@@ -24,12 +30,30 @@ export const buildingsApiSlice = apiSlice.injectEndpoints({
                body: data,
            }),
             invalidatesTags: ['Buildings']
-        })
+        }),
+        updateBuilding: builder.mutation({
+            query: ({buildingId, data}) => ({
+                url: `${BUILDING_URL}/${buildingId}`,
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['Buildings']
+        }),
+        deleteBuilding: builder.mutation({
+            query: ({buildingId}) => ({
+                url: `${BUILDING_URL}/${buildingId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Buildings']
+        }),
     })
 })
 
 export const {
     useGetBuildingsQuery,
+    useGetBuildingByIdQuery,
     useFindBuildingsQuery,
     useCreateBuildingMutation,
+    useUpdateBuildingMutation,
+    useDeleteBuildingMutation
 } = buildingsApiSlice;

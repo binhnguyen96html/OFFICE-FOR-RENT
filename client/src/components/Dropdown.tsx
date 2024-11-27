@@ -8,14 +8,15 @@ interface DropdownItem {
     code: string;
 }
 
-interface DropdownProps {
-    data: any;
+interface DropdownProps{
+    data: DropdownItem[];
     label?: string;
     field: keyof FormStateForInsert | keyof FormStateForSearch;
     inputChangeHandler: (field: keyof FormStateForInsert | keyof FormStateForSearch, enteredValue: any) => void;
     placeholder?: string;
     disabled?: boolean;
-    purpose?: string;
+    purpose?: 'insert' | 'search';
+    value?: DropdownItem | null;
 }
 
 export default function Dropdown({
@@ -26,9 +27,21 @@ export default function Dropdown({
                                      placeholder = 'Select an option',
                                      disabled = false,
                                     purpose='insert',
+                                    value=null
                                  }: DropdownProps) {
     const [open, setOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null);
+    const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(value);
+    const [displayValue, setDisplayValue] = useState<string | null>(placeholder);
+
+
+    useEffect(() => {
+        if(value !== null){
+            setSelectedItem(value);
+            setDisplayValue(value.name)
+        }
+        // console.log('value: ', value)
+        //console.log('selectedItem: ', selectedItem)
+    }, [value, placeholder]);
 
     // Memoize the toggle function to prevent unnecessary re-renders
     const toggleDropdown = useCallback(() => {
@@ -55,9 +68,10 @@ export default function Dropdown({
     }, [field, inputChangeHandler, disabled]);
 
     // Memoize the display value to reduce unnecessary re-renders
-    const displayValue = useMemo(() =>
-            selectedItem?.name || placeholder,
-        [selectedItem, placeholder]
+    const displayValue2 = useMemo(() => {
+           // console.log("select: ", selectedItem)
+            return selectedItem?.name || placeholder
+        }, [selectedItem, placeholder]
     );
 
     // Close dropdown when clicking outside

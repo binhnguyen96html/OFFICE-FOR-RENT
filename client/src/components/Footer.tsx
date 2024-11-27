@@ -73,7 +73,7 @@ const Footer = () => {
                     <div className="sm:flex sm:items-center sm:justify-between">
             <span className="text-sm text-gray-500 sm:text-center">
               © 4 <Link to="/" className="hover:underline">
-              COOK-FAFO™
+              OFFICE FOR RENT
               </Link>. All Rights Reserved.
             </span>
 

@@ -33,7 +33,7 @@ export default function FormInputForInsert({
                 <input
                     className='col-span-5 border border-gray-300 rounded w-full focus:outline-none focus:border focus:ring-1 focus:ring-green-900
                     px-2 text-xs'
-                    value={value}
+                    value={`${type === 'text' ? (value || "") : (value || 0)}`}
                     onChange={(e) => inputChangeHandler(field, e.target.value)}
                     type={type}
                     {...props}

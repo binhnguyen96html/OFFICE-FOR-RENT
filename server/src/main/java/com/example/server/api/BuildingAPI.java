@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/building")
 public class BuildingAPI {
-
+    @GetMapping("/{id}")
+    public Optional<BuildingDTO> getBuildingById(@PathVariable Long id) {
+        return buildingService.findById(id);
+    }
     @Autowired
     private BuildingService buildingService;
 
@@ -31,6 +35,19 @@ public class BuildingAPI {
     @PostMapping
     public BuildingDTO createBuilding(@RequestBody BuildingDTO buildingDTO) {
       return buildingService.save(buildingDTO);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PutMapping("/{id}")
+    public BuildingDTO updateBuilding(@PathVariable Long id, @RequestBody BuildingDTO buildingDTO) {
+        buildingDTO.setId(id);
+        return buildingService.save(buildingDTO);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @DeleteMapping("/{id}")
+    public void deleteBuilding(@PathVariable Long id) {
+        buildingService.deleteBuildingById(id);
     }
 
 }

@@ -9,6 +9,7 @@ import RentManagement from "./screens/RentManagement";
 import {Provider} from "react-redux";
 import store from "./store/store";
 import NewBuildingScreen from "./screens/NewBuildingScreen";
+import EditBuildingScreen from "./screens/EditBuildingScreen";
 
 
 const root = ReactDOM.createRoot(
@@ -21,6 +22,7 @@ const router = createBrowserRouter(
             <Route index={true} path='/' element={<HomePage/>}/>
             <Route path='/rent-management' element={<RentManagement/>}/>
             <Route path='/rent-management/new-building' element={<NewBuildingScreen />} />
+            <Route path='/rent-management/:id/edit' element={<EditBuildingScreen />} />
         </Route>
     )
 );

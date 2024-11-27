@@ -8,13 +8,13 @@ interface ButtonProps {
     type?: "button" | "submit" | "reset",
 }
 
-export default function Button({title,bgColor= 'bg-cyan-900',hoverColor='bg-cyan-700', textColor='text-white', children, onClick, type='button', ...props}:ButtonProps){
+export default function Button({title,bgColor= 'bg-cyan-900',hoverColor='hover:bg-cyan-700', textColor='text-white', children, onClick, type='button', ...props}:ButtonProps){
 
     return(
         <>
             <button
                 className={`p-2 rounded text-center inline-flex items-center gap-2 text-sm 
-                hover:${hoverColor} duration-75 transition
+                ${hoverColor} duration-75 transition
                 ${bgColor} ${textColor}`}
                 onClick={onClick}
                 type={type}

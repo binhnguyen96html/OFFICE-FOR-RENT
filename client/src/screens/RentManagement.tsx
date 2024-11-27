@@ -1,13 +1,18 @@
 import {FaArrowRight, FaChevronLeft, FaEdit} from "react-icons/fa";
 import {FaCirclePlus} from "react-icons/fa6";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 import {useState} from "react";
 import Button from "../components/Button";
+import { Button as FlowbiteButton, Modal } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { TiDeleteOutline } from "react-icons/ti";
 
 import {
+    useDeleteBuildingMutation,
     useFindBuildingsQuery,
     useGetBuildingsQuery,
 } from "../store/slices/buildingsApiSlice";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import FormInputForSearch from "../components/FormInputForSearch";
 import {FormStateForInsert, FormStateForSearch, initialFormStateForSearch} from "../types/buildingTypes";
 import {useGetDistrictsQuery} from "../store/slices/districtsApiSlice";
@@ -16,20 +21,30 @@ import {buildingTypeData} from "../constants/buildingTypeData";
 import {toast} from "react-toastify";
 import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
-
+import { Tooltip } from "flowbite-react";
 
 export default function RentManagement() {
     const [openSearch, setOpenSearch] = useState(true);
     const [form, setForm] = useState<FormStateForSearch>(initialFormStateForSearch);
     const [editBuildingModal, setEditBuildingModal] = useState(false);
+    const [deleteOpenModal, setDeleteOpenModal] = useState(false);
+    const [buildingIdForDelete, setBuildingIdForDelete] = useState(null);
+    const navigate = useNavigate();
 
     const {data: fetchedDistricts, error: fetchedDistrictsError, isLoading: fetchedDistrictsIsLoading} = useGetDistrictsQuery({});
     // console.log("fetchedDistricts: ", fetchedDistricts)
 
-    const {data: searchedBuildings, error: searchedBuildingsError, isLoading: searchedBuildingsIsLoading} = useFindBuildingsQuery(form);
+    const {
+        data: searchedBuildings,
+        error: searchedBuildingsError,
+        isLoading: searchedBuildingsIsLoading,
+        refetch: searchedBuildingsRefetch,
+    } = useFindBuildingsQuery(form);
     // console.log('searchedBuildings: ',searchedBuildings)
     // console.log('form: ', form)
 
+    const [deleteBuilding, {isLoading: deleteBuildingIsLoading}] = useDeleteBuildingMutation();
+    //console.log("deleteBuilding: ", deleteBuilding)
 
     const inputChangeHandler = (
         field: keyof FormStateForSearch | keyof FormStateForInsert,
@@ -43,8 +58,20 @@ export default function RentManagement() {
     };
 
     const editBuildingHandler = (buildingId: number) => {
-        console.log(buildingId)
+        navigate(`/rent-management/${buildingId}/edit`);
     }
+
+    const deleteBuildingHandler = async () => {
+        //console.log("buildingIdForDelete: ", buildingIdForDelete)
+        try {
+            await deleteBuilding({buildingId: buildingIdForDelete}).unwrap();
+            toast.success("Successfully deleted");
+            searchedBuildingsRefetch()
+        }catch(e){
+            toast.error('Failed to delete building')
+        }
+    }
+
 
     // const handleSubmitForSearch = async (e: React.FormEvent) => {
     //     e.preventDefault();
@@ -76,7 +103,7 @@ export default function RentManagement() {
                 <Button>
                     <Link to='/rent-management/new-building'>
                         <div className='flex justify-center items-center gap-2'>
-                            <FaCirclePlus /> New Building
+                            <FaCirclePlus/> New Building
                         </div>
                     </Link>
                 </Button>
@@ -101,7 +128,7 @@ export default function RentManagement() {
 
                 {openSearch && (
                     <form className="p-6"
-                          // onSubmit={handleSubmitForSearch}
+                        // onSubmit={handleSubmitForSearch}
                     >
                         <div className="md:grid grid-cols-2 gap-4">
                             <FormInputForSearch
@@ -241,13 +268,17 @@ export default function RentManagement() {
                             ))}
                         </div>
 
-                        {/*<div className="flex justify-end">*/}
-                        {/*    <Button type='submit' title="Search"><FaArrowRight/></Button>*/}
-                        {/*</div>*/}
+                        <div className="flex justify-end">
+                            <Button
+                                type='button'
+                                title="Clear Search"
+                                onClick={() => setForm(initialFormStateForSearch)}
+                            ><TiDeleteOutline className='text-xl'/></Button>
+                        </div>
                     </form>
                 )}
             </div>
-            
+
 
             {/*LIST OF BUILDINGS */}
             <div className='rounded shadow bg-gray-50 mt-12 overflow-hidden overflow-x-auto'>
@@ -345,8 +376,21 @@ export default function RentManagement() {
                                         <td className="px-6 py-4 border">{item.serviceFee || "N/A"}</td>
                                         <td className="px-6 py-4 border">{item.brokerageFee || "N/A"}</td>
                                         <td className="px-6 py-4 border">
-                                            <div>
-                                                <Button onClick={() => editBuildingHandler(item.id)}><FaEdit/></Button>
+                                            <div className='flex gap-2'>
+                                            <Tooltip content="Edit">
+                                                <Button data-tooltip-target="tooltip-default"
+                                                        onClick={() => editBuildingHandler(item.id)}><FaEdit/></Button>
+                                            </Tooltip>
+
+                                                <Tooltip content="Delete">
+                                                    <Button data-tooltip-target="tooltip-default"
+                                                            onClick={()=>{
+                                                                setDeleteOpenModal(true);
+                                                                setBuildingIdForDelete(item.id)
+                                                            }}><RiDeleteBin5Fill /></Button>
+                                                </Tooltip>
+
+
                                             </div>
                                         </td>
                                     </tr>
@@ -362,6 +406,32 @@ export default function RentManagement() {
                 </table>
 
             </div>
+
+
+            <Modal show={deleteOpenModal} size="md" onClose={() => setDeleteOpenModal(false)} popup>
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                            Are you sure you want to delete this building?
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <FlowbiteButton color="failure" onClick={() => {
+                                setDeleteOpenModal(false);
+                                deleteBuildingHandler()
+                            }}>
+                                {"Yes, I'm sure"}
+                            </FlowbiteButton>
+                            <FlowbiteButton color="gray" onClick={() => setDeleteOpenModal(false)}>
+                                No, cancel
+                            </FlowbiteButton>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
+
+
         </div>
     );
 }

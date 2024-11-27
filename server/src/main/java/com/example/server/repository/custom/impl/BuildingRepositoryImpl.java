@@ -53,14 +53,14 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
                 buildingTypes = (List<String>) rentTypesObject;
             }
         }
-        System.out.println("Building Types: " + buildingTypes.size());
+        //System.out.println("Building Types: " + buildingTypes.size());
 
 
         buildSpecialQuery(params, buildingTypes, whereQuery, joinQuery);
         buildNormalQuery(params, whereQuery);
         finalQuery.append(joinQuery).append(SystemConstant.ONE_EQUAL_ONE).append(whereQuery)
                     .append("\nGROUP BY building.id");
-            System.out.println("sql: " + finalQuery);
+            //System.out.println("sql: " + finalQuery);
 
         Query query = entityManager.createNativeQuery(finalQuery.toString(), BuildingEntity.class);
 
@@ -114,8 +114,6 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         Integer areaRentTo = MapUtils.getObject(params, SystemConstant.RENT_AREA_TO, Integer.class);
         Integer rentPriceFrom = MapUtils.getObject(params, SystemConstant.RENT_PRICE_FROM, Integer.class);
         Integer rentPriceTo = MapUtils.getObject(params, SystemConstant.RENT_PRICE_TO, Integer.class);
-
-        System.out.println("rentPriceFrom: " + rentPriceFrom);
 
         // DISTRICT CODE
         if (districtCode != null) {
