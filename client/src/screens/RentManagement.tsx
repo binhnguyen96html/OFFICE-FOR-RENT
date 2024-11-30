@@ -1,11 +1,12 @@
 import {FaArrowRight, FaChevronLeft, FaEdit} from "react-icons/fa";
 import {FaCirclePlus} from "react-icons/fa6";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Button from "../components/Button";
 import { Button as FlowbiteButton, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { TiDeleteOutline } from "react-icons/ti";
+import { FaUserCog } from "react-icons/fa";
 
 import {
     useDeleteBuildingMutation,
@@ -22,17 +23,42 @@ import {toast} from "react-toastify";
 import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
 import { Tooltip } from "flowbite-react";
+import {
+    useGetUsersQuery,
+    useLazyGetUsersWithAssginedBuildingQuery,
+    useUpdateAssignStaffToBuildingMutation
+} from "../store/slices/usersApiSlice";
 
 export default function RentManagement() {
     const [openSearch, setOpenSearch] = useState(true);
     const [form, setForm] = useState<FormStateForSearch>(initialFormStateForSearch);
-    const [editBuildingModal, setEditBuildingModal] = useState(false);
     const [deleteOpenModal, setDeleteOpenModal] = useState(false);
     const [buildingIdForDelete, setBuildingIdForDelete] = useState(null);
+    const [assignStaffOpenModal, setAssignStaffOpenModal] = useState(false);
+    const [assignedStaffIds, setAssignStaffIds] = useState<any>([]);
+    const [buildingIdForAssignStaff, setBuildingIdForAssignStaff] = useState(null);
+
     const navigate = useNavigate();
 
-    const {data: fetchedDistricts, error: fetchedDistrictsError, isLoading: fetchedDistrictsIsLoading} = useGetDistrictsQuery({});
-    // console.log("fetchedDistricts: ", fetchedDistricts)
+    const {
+        data: fetchedDistricts,
+        error: fetchedDistrictsError,
+        isLoading: fetchedDistrictsIsLoading
+    } = useGetDistrictsQuery({});
+    //console.log("fetchedDistricts: ", fetchedDistricts)
+
+    const {
+        data: fetchedUsers,
+        error: fetchedUsersError,
+        isLoading: fetchedUsersIsLoading
+    } = useGetUsersQuery({});
+    //console.log("fetchedUsers: ", fetchedUsers)
+
+    const [triggerGetUsersWithAssginedBuildingQuery, {
+        data: fetchedUsersWithAssignedBuilding,
+        isLoading: fetchedUsersWithAssignedBuildingIsLoading,
+    }] = useLazyGetUsersWithAssginedBuildingQuery();
+    //console.log('fetchedUsersWithAssignedBuilding: ',fetchedUsersWithAssignedBuilding)
 
     const {
         data: searchedBuildings,
@@ -43,8 +69,16 @@ export default function RentManagement() {
     // console.log('searchedBuildings: ',searchedBuildings)
     // console.log('form: ', form)
 
-    const [deleteBuilding, {isLoading: deleteBuildingIsLoading}] = useDeleteBuildingMutation();
+    const [
+        deleteBuilding,
+        {isLoading: deleteBuildingIsLoading}
+    ] = useDeleteBuildingMutation();
     //console.log("deleteBuilding: ", deleteBuilding)
+
+    const [
+        updateAssignUserToBuilding,
+        {isLoading: updateAssignUserToBuildingIsLoading}
+    ] = useUpdateAssignStaffToBuildingMutation();
 
     const inputChangeHandler = (
         field: keyof FormStateForSearch | keyof FormStateForInsert,
@@ -54,8 +88,10 @@ export default function RentManagement() {
             ...curForm,
             [field]: enteredValue,
         }));
-        // console.log("form: ", form);
+        console.log("form: ", form);
+        console.log('assignedStaffIds: ', assignedStaffIds)
     };
+
 
     const editBuildingHandler = (buildingId: number) => {
         navigate(`/rent-management/${buildingId}/edit`);
@@ -69,6 +105,38 @@ export default function RentManagement() {
             searchedBuildingsRefetch()
         }catch(e){
             toast.error('Failed to delete building')
+        }
+    }
+
+    useEffect(() => {
+
+       setAssignStaffIds([])
+        //console.log('assignStaffIds: ', assignedStaffIds)
+
+        //console.log('fetchedUsersWithAssignedBuilding: ',fetchedUsersWithAssignedBuilding)
+        if(fetchedUsersWithAssignedBuilding) {
+            fetchedUsersWithAssignedBuilding.forEach((item: any) => {
+                if(item.assignedBuidingChecked === true){
+                    setAssignStaffIds((prev:any) => [...prev, item.id])
+                }
+            })
+        }
+    }, [fetchedUsersWithAssignedBuilding, assignStaffOpenModal]);
+        //console.log('assignedStaffIds2: ', assignedStaffIds)
+
+    const assignStaffsToBuildingHandler = async () => {
+        const submitedData = {
+            buildingId: buildingIdForAssignStaff,
+            staffIds: assignedStaffIds
+        }
+
+        try {
+            await updateAssignUserToBuilding(submitedData);
+            toast.success("Successfully updated Assigned Staffs to this building!");
+        }catch(e){
+            toast.error("Failed to assign staffs to this building!");
+        }finally {
+            setAssignStaffOpenModal(false);
         }
     }
 
@@ -151,10 +219,11 @@ export default function RentManagement() {
                             {/*DISTRICTS*/}
                             <Dropdown
                                 data={fetchedDistricts}
-                                field='districtCode'
                                 label='District'
-                                purpose='search'
                                 inputChangeHandler={inputChangeHandler}
+                                field='districtCode'
+                                fieldFromFetchedDataForDisplay='name'
+                                fieldFromFetchedDataForSendBackDatabase='code'
                             />
 
                             <FormInputForSearch
@@ -238,7 +307,16 @@ export default function RentManagement() {
                                 value={form.managerPhone}
                                 type='number'
                             />
-                            {/*<Dropdown label={"Select assigned staff"} value={districts}/>*/}
+
+                            {/*ASSIGNED USER */}
+                            <Dropdown
+                                data={fetchedUsers}
+                                field='staffId'
+                                label='Assigned Users'
+                                fieldFromFetchedDataForDisplay='fullname'
+                                fieldFromFetchedDataForSendBackDatabase='id'
+                                inputChangeHandler={inputChangeHandler}
+                            />
                         </div>
                         <div className="mt-2 flex gap-4">
                             {buildingTypeData.map((type, index) => (
@@ -382,13 +460,37 @@ export default function RentManagement() {
                                                         onClick={() => editBuildingHandler(item.id)}><FaEdit/></Button>
                                             </Tooltip>
 
-                                                <Tooltip content="Delete">
+                                            <Tooltip content="Delete">
                                                     <Button data-tooltip-target="tooltip-default"
                                                             onClick={()=>{
                                                                 setDeleteOpenModal(true);
                                                                 setBuildingIdForDelete(item.id)
                                                             }}><RiDeleteBin5Fill /></Button>
-                                                </Tooltip>
+                                            </Tooltip>
+
+                                            <Tooltip content="Assign Staff">
+                                                <Button
+                                                    data-tooltip-target="tooltip-default"
+                                                    onClick={async () => {
+                                                        //console.log('buildingIdForAssignStaff: ',buildingIdForAssignStaff )
+                                                        try {
+                                                                setAssignStaffOpenModal(true);
+                                                                //console.log("item.id: ", item.id)
+                                                                setBuildingIdForAssignStaff(item.id)
+                                                                const result = await triggerGetUsersWithAssginedBuildingQuery({buildingId: item.id});
+                                                                if (result.error) {
+                                                                    throw result.error;
+                                                                }
+                                                            } catch(error) {
+                                                            console.error('Error fetching assigned staff:', error);
+                                                            toast.error('Failed to fetch assigned staffs for this building!');
+                                                            // setAssignStaffOpenModal(false);
+                                                        }
+                                                    }}
+                                                >
+                                                    {fetchedUsersWithAssignedBuildingIsLoading ? <Spinner /> : <FaUserCog />}
+                                                </Button>
+                                            </Tooltip>
 
 
                                             </div>
@@ -408,6 +510,7 @@ export default function RentManagement() {
             </div>
 
 
+            {/*MODAL FOR DELETE BUILDING */}
             <Modal show={deleteOpenModal} size="md" onClose={() => setDeleteOpenModal(false)} popup>
                 <Modal.Header />
                 <Modal.Body>
@@ -425,6 +528,64 @@ export default function RentManagement() {
                             </FlowbiteButton>
                             <FlowbiteButton color="gray" onClick={() => setDeleteOpenModal(false)}>
                                 No, cancel
+                            </FlowbiteButton>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
+
+
+
+            {/*MODAL FOR ASSIGN STAFF TO BUILDING */}
+            <Modal show={assignStaffOpenModal} size="md" onClose={() => setAssignStaffOpenModal(false)} popup>
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <FaUserCog className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                            Do you want to reassign staffs to this building?
+                        </h3>
+
+                        <div>
+                            {fetchedUsersWithAssignedBuildingIsLoading
+                                ? <Spinner />
+                                : fetchedUsersWithAssignedBuilding?.length > 0 ? (
+                                   fetchedUsersWithAssignedBuilding.map((user: any) => (
+                                       <div key={`assignedUser${user.id}`} className='border rounded flex justify-around py-3'>
+                                               <input
+                                                   className={`w-4 h-4 text-cyan-900 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2`}
+                                                   type="checkbox"
+                                                   id={user.id}
+                                                   value={user.assignedBuidingChecked}
+                                                   checked={assignedStaffIds.includes(user.id)}
+                                                   onChange={(e) => {
+                                                       const isChecked = e.target.checked;
+                                                       setAssignStaffIds((prev: number[]) =>
+                                                           isChecked ? [...prev, user.id] : prev.filter((id) => id !== user.id)
+                                                       );
+                                                   }}
+                                               />
+
+                                           <div className='ml-2 text-sm font-medium text-gray-900'>
+                                               {user.fullname}
+                                           </div>
+                                       </div>
+                                   ))
+                                ) : (<div className='my-3'>None of Users</div>)
+                            }
+                        </div>
+
+                        <div className="flex justify-center gap-4 mt-3">
+                            <FlowbiteButton color="success" onClick={() => {
+                                assignStaffsToBuildingHandler();
+                            }}>
+                                Assign
+                            </FlowbiteButton>
+                            <FlowbiteButton color="gray" onClick={() => {
+                                setAssignStaffOpenModal(false)
+                            }}
+                            >
+                                Cancel
                             </FlowbiteButton>
                         </div>
                     </div>

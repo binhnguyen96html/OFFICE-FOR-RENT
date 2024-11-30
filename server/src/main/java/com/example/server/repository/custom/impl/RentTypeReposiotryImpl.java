@@ -17,7 +17,6 @@ public class RentTypeReposiotryImpl implements RentTypeRepositoryCustom {
     @Override
     public List<RentTypeEntity> findByBuilding_Id(Long buildingId) {
 
-
         String jpql = "SELECT rt FROM RentTypeEntity rt " +
                         "JOIN rt.buildings2 b " +
                         "WHERE b.id = :buildingId";

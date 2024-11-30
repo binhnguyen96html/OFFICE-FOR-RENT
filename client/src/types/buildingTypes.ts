@@ -13,7 +13,7 @@ export interface FormStateForSearch {
     rentPriceTo: string;
     managerName: string;
     managerPhone: string;
-    assignedStaff: string;
+    staffId: string;
     rentType_s: string;
 }
 
@@ -32,7 +32,7 @@ export const initialFormStateForSearch: FormStateForSearch = {
     rentPriceTo: "",
     managerName: "",
     managerPhone: "",
-    assignedStaff: "",
+    staffId: "",
     rentType_s: "",
 };
 

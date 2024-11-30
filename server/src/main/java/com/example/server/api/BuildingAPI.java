@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/building")
+@RequestMapping("/api/buildings")
 public class BuildingAPI {
     @GetMapping("/{id}")
     public Optional<BuildingDTO> getBuildingById(@PathVariable Long id) {

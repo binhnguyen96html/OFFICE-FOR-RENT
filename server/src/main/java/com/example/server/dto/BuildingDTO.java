@@ -36,6 +36,8 @@ public class BuildingDTO {
     private String managerPhone;
     private String address;
 
+    private Long staffId;
+
     private String rentType_s;
     private String[] rentTypes = new String[]{};
 
@@ -286,6 +288,14 @@ public class BuildingDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Long getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(Long staffId) {
+        this.staffId = staffId;
     }
 
     public String getRentType_s() {

@@ -17,8 +17,13 @@ export default function NewBuildingScreen(){
         districtId: ''
     });
 
-    const {data: fetchedDistricts, error: fetchedDistrictsError, isLoading: fetchedDistrictsIsLoading} = useGetDistrictsQuery({});
+    const {
+        data: fetchedDistricts,
+        error: fetchedDistrictsError,
+        isLoading: fetchedDistrictsIsLoading
+    } = useGetDistrictsQuery({});
     // console.log("fetchedDistricts: ", fetchedDistricts)
+
 
     const [createBuilding, {isLoading: isLoadingForCreateBuilding}] = useCreateBuildingMutation();
 
@@ -129,21 +134,23 @@ export default function NewBuildingScreen(){
                                     <LuAsterisk className='text-xs'/>
                                 </div>
                                 <div className='col-span-5'>
-                                       <Dropdown
-                                           data={fetchedDistricts}
-                                           field='districtId'
-                                           inputChangeHandler={(field, value) => {
-                                               inputChangeHandler(field, value);
-                                               // Clear district validation error when a selection is made
-                                               setValidationErrors(prev => ({
-                                                   ...prev,
-                                                   districtId: ''
-                                               }));
-                                           }}
-                                       />
-                                {validationErrors.districtId && (
-                                    <p className="text-red-500 text-xs mt-2">{validationErrors.districtId}</p>
-                                )}
+                                    <Dropdown
+                                        data={fetchedDistricts}
+                                        inputChangeHandler={(field, value) => {
+                                            inputChangeHandler(field, value);
+                                            // Clear district validation error when a selection is made
+                                            setValidationErrors(prev => ({
+                                                ...prev,
+                                                districtId: ''
+                                            }));
+                                        }}
+                                        field='districtId'
+                                        fieldFromFetchedDataForDisplay='name'
+                                        fieldFromFetchedDataForSendBackDatabase='id'
+                                    />
+                                    {validationErrors.districtId && (
+                                        <p className="text-red-500 text-xs mt-2">{validationErrors.districtId}</p>
+                                    )}
                                 </div>
                             </div>
 
@@ -357,6 +364,7 @@ export default function NewBuildingScreen(){
                                     )}
                                 </div>
                             </div>
+
                         </div>
 
                         <div className="mt-2 flex justify-end">

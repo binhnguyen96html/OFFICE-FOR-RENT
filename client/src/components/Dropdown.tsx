@@ -2,21 +2,16 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {FaChevronDown} from "react-icons/fa";
 import {FormStateForInsert, FormStateForSearch} from "../types/buildingTypes";
 
-interface DropdownItem {
-    id: string | number;
-    name: string;
-    code: string;
-}
-
 interface DropdownProps{
-    data: DropdownItem[];
+    data: any;
     label?: string;
     field: keyof FormStateForInsert | keyof FormStateForSearch;
     inputChangeHandler: (field: keyof FormStateForInsert | keyof FormStateForSearch, enteredValue: any) => void;
     placeholder?: string;
     disabled?: boolean;
-    purpose?: 'insert' | 'search';
-    value?: DropdownItem | null;
+    currentSelectedValue?: any;
+    fieldFromFetchedDataForDisplay: string;
+    fieldFromFetchedDataForSendBackDatabase: string;
 }
 
 export default function Dropdown({
@@ -26,22 +21,23 @@ export default function Dropdown({
                                      inputChangeHandler,
                                      placeholder = 'Select an option',
                                      disabled = false,
-                                    purpose='insert',
-                                    value=null
+                                     currentSelectedValue=null,
+                                     fieldFromFetchedDataForDisplay,
+                                     fieldFromFetchedDataForSendBackDatabase
                                  }: DropdownProps) {
     const [open, setOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(value);
+    const [selectedItem, setSelectedItem] = useState<any>(currentSelectedValue);
     const [displayValue, setDisplayValue] = useState<string | null>(placeholder);
 
 
     useEffect(() => {
-        if(value !== null){
-            setSelectedItem(value);
-            setDisplayValue(value.name)
+        if(currentSelectedValue !== null){
+            setSelectedItem(currentSelectedValue);
+            setDisplayValue(currentSelectedValue[fieldFromFetchedDataForDisplay])
         }
-        // console.log('value: ', value)
-        //console.log('selectedItem: ', selectedItem)
-    }, [value, placeholder]);
+        // console.log('currentSelectedValue: ', currentSelectedValue)
+        // console.log('selectedItem: ', selectedItem)
+    }, [currentSelectedValue, placeholder]);
 
     // Memoize the toggle function to prevent unnecessary re-renders
     const toggleDropdown = useCallback(() => {
@@ -51,28 +47,26 @@ export default function Dropdown({
     }, [disabled]);
 
     // Memoize the item selection handler
-    const handleItemSelect = useCallback((item: DropdownItem | null) => {
+    const handleItemSelect = useCallback((item: any) => {
         if (!disabled) {
             setSelectedItem(item);
             setOpen(false);
             if (item === null) {
                     inputChangeHandler(field, '');
             } else {
-                if (purpose === 'insert') {
-                    inputChangeHandler(field, item.id);
-                } else if (purpose === 'search') {
-                    inputChangeHandler(field, item.code);
-                }
+                    inputChangeHandler(field, item[fieldFromFetchedDataForSendBackDatabase]);
+                    //console.log('item[fieldFromFetchedDataForSendBackDatabase]: ', item[fieldFromFetchedDataForSendBackDatabase])
+                    setDisplayValue(item[fieldFromFetchedDataForDisplay]);
             }
         }
     }, [field, inputChangeHandler, disabled]);
 
     // Memoize the display value to reduce unnecessary re-renders
-    const displayValue2 = useMemo(() => {
-           // console.log("select: ", selectedItem)
-            return selectedItem?.name || placeholder
-        }, [selectedItem, placeholder]
-    );
+    // const displayValue2 = useMemo(() => {
+    //        // console.log("select: ", selectedItem)
+    //         return selectedItem?[showedField] || placeholder
+    //     }, [selectedItem, placeholder]
+    // );
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -94,7 +88,7 @@ export default function Dropdown({
             id={`dropdown-${field}`}
             className={`relative w-44 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-            {label && <p className="text-green-900 text-sm">{label}</p>}
+            {label && <p className="text-green-900 text-sm mt-1">{label}</p>}
 
             <button
                 type="button"
@@ -126,7 +120,7 @@ export default function Dropdown({
                                         `}
                                    onClick={() => handleItemSelect(item)}
                                >
-                                   <span className="block px-4 py-2">{item.name}</span>
+                                   <span className="block px-4 py-2">{item[fieldFromFetchedDataForDisplay]}</span>
                                </li>
                                ))}
                            <li

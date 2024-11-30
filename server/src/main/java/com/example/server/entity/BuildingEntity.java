@@ -107,6 +107,13 @@ public class BuildingEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "renttypeid", nullable = false))
     private List<RentTypeEntity> renttypes2 = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "assignmentbuilding",
+            joinColumns = @JoinColumn(name = "buildingid", nullable = false),
+            inverseJoinColumns = @JoinColumn(name="staffid", nullable = false))
+    private List<UserEntity> users3 = new ArrayList<>();
+
 
     public String getName() {
         return name;
@@ -354,5 +361,13 @@ public class BuildingEntity extends BaseEntity {
 
     public void setRenttypes2(List<RentTypeEntity> renttypes2) {
         this.renttypes2 = renttypes2;
+    }
+
+    public List<UserEntity> getUsers3() {
+        return users3;
+    }
+
+    public void setUsers3(List<UserEntity> users3) {
+        this.users3 = users3;
     }
 }

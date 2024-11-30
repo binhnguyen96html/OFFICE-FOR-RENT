@@ -60,7 +60,8 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         buildNormalQuery(params, whereQuery);
         finalQuery.append(joinQuery).append(SystemConstant.ONE_EQUAL_ONE).append(whereQuery)
                     .append("\nGROUP BY building.id");
-            //System.out.println("sql: " + finalQuery);
+
+        System.out.println("sql: " + finalQuery);
 
         Query query = entityManager.createNativeQuery(finalQuery.toString(), BuildingEntity.class);
 
@@ -124,7 +125,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
 
         // STAFF ID
         if (staffId != null) {
-            joinQuery.append(QueryBuilderUtils.buildingSqlWithJoin("assignmentbuilding", "staffid", "building", "id"));
+            joinQuery.append(QueryBuilderUtils.buildingSqlWithJoin("assignmentbuilding", "buildingid", "building", "id"));
             whereQuery.append(QueryBuilderUtils.buildQueryWithOperator("assignmentbuilding.staffid", staffId,
                     SystemConstant.EQUAL_OPERATOR));
         }

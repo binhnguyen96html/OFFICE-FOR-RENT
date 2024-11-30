@@ -35,6 +35,7 @@ export default function EditBuildingScreen(){
     } = useGetDistrictsQuery({});
     //console.log("fetchedDistricts: ", fetchedDistricts)
 
+
     const {
         data: fetchedBuildingById,
         error: fetchedBuildingByIdError,
@@ -165,7 +166,7 @@ export default function EditBuildingScreen(){
                                                                 <Dropdown
                                                                     data={fetchedDistricts}
                                                                     field='districtId'
-                                                                    value={fetchedDistricts.filter((d:any) => d.id === form.districtId)[0] || null}
+                                                                    currentSelectedValue={fetchedDistricts.filter((d:any) => d.id === form.districtId)[0] || null}
                                                                     inputChangeHandler={(field, value) => {
                                                                         inputChangeHandler(field, value);
                                                                         // Clear district validation error when a selection is made
@@ -174,6 +175,8 @@ export default function EditBuildingScreen(){
                                                                             districtId: ''
                                                                         }));
                                                                     }}
+                                                                    fieldFromFetchedDataForDisplay='name'
+                                                                    fieldFromFetchedDataForSendBackDatabase='id'
                                                                 />
                                                         {validationErrors.districtId && (
                                                             <p className="text-red-500 text-xs mt-2">{validationErrors.districtId}</p>
@@ -391,6 +394,7 @@ export default function EditBuildingScreen(){
                                                             )}
                                                         </div>
                                                     </div>
+
                                 </div>
 
                                 <div className="mt-2 flex justify-end">
