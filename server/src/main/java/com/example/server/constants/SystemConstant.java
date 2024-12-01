@@ -8,6 +8,7 @@ public class SystemConstant {
     public static final String EQUAL_OPERATOR = " = ";
     public static final String AND_STATEMENT = "\nAND ";
     public static final String BUILDING_ALIAS = "building.";
+    public static final String CUSTOMER_ALIAS = "customer.";
 
     // field search
     public static final String NAME = "name";

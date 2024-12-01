@@ -25,11 +25,11 @@ import Alert from "../components/Alert";
 import { Tooltip } from "flowbite-react";
 import {
     useGetUsersQuery,
-    useLazyGetUsersWithAssginedBuildingQuery,
+    useLazyGetUsersWithAssignedBuildingQuery,
     useUpdateAssignStaffToBuildingMutation
 } from "../store/slices/usersApiSlice";
 
-export default function RentManagement() {
+export default function BuildingManagement() {
     const [openSearch, setOpenSearch] = useState(true);
     const [form, setForm] = useState<FormStateForSearch>(initialFormStateForSearch);
     const [deleteOpenModal, setDeleteOpenModal] = useState(false);
@@ -57,7 +57,7 @@ export default function RentManagement() {
     const [triggerGetUsersWithAssginedBuildingQuery, {
         data: fetchedUsersWithAssignedBuilding,
         isLoading: fetchedUsersWithAssignedBuildingIsLoading,
-    }] = useLazyGetUsersWithAssginedBuildingQuery();
+    }] = useLazyGetUsersWithAssignedBuildingQuery();
     //console.log('fetchedUsersWithAssignedBuilding: ',fetchedUsersWithAssignedBuilding)
 
     const {
@@ -75,13 +75,14 @@ export default function RentManagement() {
     ] = useDeleteBuildingMutation();
     //console.log("deleteBuilding: ", deleteBuilding)
 
+
     const [
         updateAssignUserToBuilding,
         {isLoading: updateAssignUserToBuildingIsLoading}
     ] = useUpdateAssignStaffToBuildingMutation();
 
     const inputChangeHandler = (
-        field: keyof FormStateForSearch | keyof FormStateForInsert,
+        field: any,
         enteredValue: any,
     ) => {
         setForm((curForm) => ({
@@ -94,7 +95,7 @@ export default function RentManagement() {
 
 
     const editBuildingHandler = (buildingId: number) => {
-        navigate(`/rent-management/${buildingId}/edit`);
+        navigate(`/building-management/${buildingId}/edit`);
     }
 
     const deleteBuildingHandler = async () => {
@@ -169,7 +170,7 @@ export default function RentManagement() {
             {/*BUTTON*/}
             <div className='w-full flex justify-end'>
                 <Button>
-                    <Link to='/rent-management/new-building'>
+                    <Link to='/building-management/new-building'>
                         <div className='flex justify-center items-center gap-2'>
                             <FaCirclePlus/> New Building
                         </div>

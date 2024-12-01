@@ -11,6 +11,7 @@ public class UserDTO {
     private String status;
 
     private boolean assignedBuidingChecked;
+    private boolean assignedCustomerChecked;
 
     public Long getId() {
         return id;
@@ -74,5 +75,13 @@ public class UserDTO {
 
     public void setAssignedBuidingChecked(boolean assignedBuidingChecked) {
         this.assignedBuidingChecked = assignedBuidingChecked;
+    }
+
+    public boolean isAssignedCustomerChecked() {
+        return assignedCustomerChecked;
+    }
+
+    public void setAssignedCustomerChecked(boolean assignedCustomerChecked) {
+        this.assignedCustomerChecked = assignedCustomerChecked;
     }
 }

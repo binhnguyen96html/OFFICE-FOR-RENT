@@ -1,14 +1,15 @@
-import {FormStateForInsert} from "../types/buildingTypes";
 import {LuAsterisk} from "react-icons/lu";
 
 
-interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement>{
+interface FormInputProps{
     label: string;
-    inputChangeHandler: (field: keyof FormStateForInsert, enteredValue: any) => void;
-    field: keyof FormStateForInsert;
+    inputChangeHandler: (field: any, enteredValue: any) => void;
+    field: any;
     value: any;
     required?: boolean,
     type?: string;
+    textarea?: boolean;
+    placeholder?: string;
 }
 
 export default function FormInputForInsert({
@@ -18,7 +19,8 @@ export default function FormInputForInsert({
     value,
     required = false,
     type='text',
-    ...props
+    textarea = false,
+    placeholder
 }: FormInputProps){
 
 
@@ -30,14 +32,23 @@ export default function FormInputForInsert({
                     {required && <LuAsterisk className='text-xs'/>}
                 </div>
 
-                <input
-                    className='col-span-5 border border-gray-300 rounded w-full focus:outline-none focus:border focus:ring-1 focus:ring-green-900
-                    px-2 text-xs'
-                    value={`${type === 'text' ? (value || "") : (value || 0)}`}
-                    onChange={(e) => inputChangeHandler(field, e.target.value)}
-                    type={type}
-                    {...props}
-                />
+                {textarea ? (
+                    <textarea
+                        className={`col-span-5 border border-gray-300 rounded w-full focus:outline-none focus:border focus:ring-1 focus:ring-green-900
+                    px-2 text-xs`}
+                        value={`${type !== null ? value : ''}`}
+                        onChange={(e) => inputChangeHandler(field, e.target.value)}
+                    />
+                ) : (
+                    <input
+                        className={`col-span-5 border border-gray-300 rounded w-full focus:outline-none focus:border focus:ring-1 focus:ring-green-900
+                    px-2 text-xs ${textarea && 'h-16'}`}
+                        value={`${type !== null ? value : ''}`}
+                        onChange={(e) => inputChangeHandler(field, e.target.value)}
+                        type={type}
+                        placeholder={placeholder}
+                    />
+                )}
 
             </div>
         </div>

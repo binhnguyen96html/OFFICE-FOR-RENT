@@ -34,6 +34,12 @@ public class UserAPI {
         return userService.findAllUser_withAssignedBuildingStatus(buildingId);
     }
 
+    @GetMapping("/assigned-staffs-to-customer/{customerId}")
+    public List<UserDTO> getAssignedStaffBy_CustomerId(@PathVariable Long customerId) {
+        return userService.findAllUser_withAssignedCustomerStatus(customerId);
+    }
+
+
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/assign-staffs-to-building")
     public void assignStaffsToBuilding(@RequestBody AssignmentBuildingRequestDTO assignmentBuildingRequestDTO) {

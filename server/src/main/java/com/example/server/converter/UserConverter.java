@@ -20,12 +20,22 @@ public class UserConverter {
     }
 
     public UserDTO converterToDTO_withAssignedBuildingChecked(UserEntity userEntity, Set<Long> staffIds) {
-            UserDTO buildingDTO = modelMapper.map(userEntity, UserDTO.class);
+            UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
         if(staffIds.contains(userEntity.getId())){
-            buildingDTO.setAssignedBuidingChecked(true);
+            userDTO.setAssignedBuidingChecked(true);
         }else{
-            buildingDTO.setAssignedBuidingChecked(false);
+            userDTO.setAssignedBuidingChecked(false);
         }
-        return buildingDTO;
+        return userDTO;
+    }
+
+    public UserDTO converterToDTO_withAssignedCustomerChecked(UserEntity userEntity, Set<Long> staffIds) {
+        UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
+        if(staffIds.contains(userEntity.getId())){
+            userDTO.setAssignedCustomerChecked(true);
+        }else{
+            userDTO.setAssignedCustomerChecked(false);
+        }
+        return userDTO;
     }
 }

@@ -1,9 +1,10 @@
 import {FormStateForSearch} from "../types/buildingTypes";
+import {ICustomerForSearch} from "../types/customerTypes";
 
 interface FormInputProps {
     label: string;
-    inputChangeHandler: (field: keyof FormStateForSearch, enteredValue: any) => void;
-    field: keyof FormStateForSearch;
+    inputChangeHandler: (field: any, enteredValue: any) => void;
+    field: any;
     value: any;
     required?: boolean,
     type?: string;

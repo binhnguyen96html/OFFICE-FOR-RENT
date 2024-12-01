@@ -13,7 +13,7 @@ export default function Button({title,bgColor= 'bg-cyan-900',hoverColor='hover:b
     return(
         <>
             <button
-                className={`p-2 rounded text-center inline-flex items-center gap-2 text-sm 
+                className={`py-2 px-4 rounded text-center inline-flex items-center gap-2 text-sm 
                 ${hoverColor} duration-75 transition
                 ${bgColor} ${textColor}`}
                 onClick={onClick}

@@ -53,7 +53,7 @@ export default function EditBuildingScreen(){
     }, [fetchedBuildingById]);
 
     const inputChangeHandler = (
-        field: keyof FormStateForSearch | keyof FormStateForInsert,
+        field: any,
         enteredValue: any,
     ) => {
 
@@ -96,9 +96,9 @@ export default function EditBuildingScreen(){
                 const result = await updateBuilding({buildingId, data: form}).unwrap();
                 // console.log('Success:', result);
                 if(result){
-                    toast.success("Sucessfully updating building");
+                    toast.success("Successfully updating building");
                     fetchedBuildingByIdRefetch()
-                    navigate('/rent-management');
+                    navigate('/building-management');
                 }
             }
 
@@ -397,7 +397,14 @@ export default function EditBuildingScreen(){
 
                                 </div>
 
-                                <div className="mt-2 flex justify-end">
+                                <div className="mt-2 flex gap-4 justify-end">
+                                    <Button
+                                        title="Cancel"
+                                        bgColor={'bg-gray-400'}
+                                        hoverColor='hover:bg-gray-900'
+                                        onClick={() => navigate('/building-management')}
+                                    ></Button>
+
                                     <Button
                                         title="Update Building"
                                         type='submit'

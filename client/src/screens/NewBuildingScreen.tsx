@@ -8,6 +8,8 @@ import {useCreateBuildingMutation} from "../store/slices/buildingsApiSlice";
 import FormInputForInsert from "../components/FormInputForInsert";
 import {toast} from "react-toastify";
 import {LuAsterisk} from "react-icons/lu";
+import {Spinner} from "flowbite-react";
+import {useNavigate} from "react-router-dom";
 
 
 export default function NewBuildingScreen(){
@@ -16,6 +18,8 @@ export default function NewBuildingScreen(){
         rentType_s: '',
         districtId: ''
     });
+
+    const navigate = useNavigate();
 
     const {
         data: fetchedDistricts,
@@ -29,7 +33,7 @@ export default function NewBuildingScreen(){
 
 
     const inputChangeHandler = (
-        field: keyof FormStateForSearch | keyof FormStateForInsert,
+        field: any,
         enteredValue: any,
     ) => {
 
@@ -72,6 +76,7 @@ export default function NewBuildingScreen(){
                 const result = await createBuilding(form).unwrap();
                 //console.log('Success:', result);
                 toast.success("Sucessfully created");
+                setForm(initialFormStateForInsert)
             }
 
             // setForm(initialFormStateForInsert);
@@ -101,10 +106,11 @@ export default function NewBuildingScreen(){
                     <div className="italic">Add new building</div>
                 </div>
 
+                {isLoadingForCreateBuilding ? (
+                    <Spinner />
+                ) : (
 
-                    <form className="p-6"
-                          onSubmit={(e:any) => submitHandler(e)}
-                    >
+                    <form className="p-6" onSubmit={(e: any) => submitHandler(e)}>
                         <div className="">
                             <FormInputForInsert
                                 label={"Name"}
@@ -367,7 +373,13 @@ export default function NewBuildingScreen(){
 
                         </div>
 
-                        <div className="mt-2 flex justify-end">
+                        <div className="mt-2 flex gap-4 justify-end">
+                            <Button
+                                title="Cancel"
+                                bgColor={'bg-gray-400'}
+                                hoverColor='hover:bg-gray-900'
+                                onClick={() => navigate('/building-management')}
+                            ></Button>
                             <Button
                                 title="Add Building"
                                 type='submit'
@@ -375,6 +387,7 @@ export default function NewBuildingScreen(){
                         </div>
                     </form>
 
+                )}
             </div>
         </div>
     )

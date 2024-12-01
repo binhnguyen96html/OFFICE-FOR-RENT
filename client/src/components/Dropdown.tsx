@@ -1,17 +1,17 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {FaChevronDown} from "react-icons/fa";
-import {FormStateForInsert, FormStateForSearch} from "../types/buildingTypes";
 
 interface DropdownProps{
     data: any;
     label?: string;
-    field: keyof FormStateForInsert | keyof FormStateForSearch;
-    inputChangeHandler: (field: keyof FormStateForInsert | keyof FormStateForSearch, enteredValue: any) => void;
+    field: any;
+    inputChangeHandler: (field: any, enteredValue: any) => void;
     placeholder?: string;
     disabled?: boolean;
     currentSelectedValue?: any;
     fieldFromFetchedDataForDisplay: string;
     fieldFromFetchedDataForSendBackDatabase: string;
+    reset?: boolean;
 }
 
 export default function Dropdown({
@@ -23,7 +23,8 @@ export default function Dropdown({
                                      disabled = false,
                                      currentSelectedValue=null,
                                      fieldFromFetchedDataForDisplay,
-                                     fieldFromFetchedDataForSendBackDatabase
+                                     fieldFromFetchedDataForSendBackDatabase,
+                                    reset = false,
                                  }: DropdownProps) {
     const [open, setOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<any>(currentSelectedValue);
@@ -37,7 +38,11 @@ export default function Dropdown({
         }
         // console.log('currentSelectedValue: ', currentSelectedValue)
         // console.log('selectedItem: ', selectedItem)
-    }, [currentSelectedValue, placeholder]);
+        if(reset === true){
+            //console.log('reset: ', reset)
+            setDisplayValue(placeholder)
+        }
+    }, [currentSelectedValue, placeholder, displayValue, reset]);
 
     // Memoize the toggle function to prevent unnecessary re-renders
     const toggleDropdown = useCallback(() => {
@@ -53,6 +58,7 @@ export default function Dropdown({
             setOpen(false);
             if (item === null) {
                     inputChangeHandler(field, '');
+                    setDisplayValue('None')
             } else {
                     inputChangeHandler(field, item[fieldFromFetchedDataForSendBackDatabase]);
                     //console.log('item[fieldFromFetchedDataForSendBackDatabase]: ', item[fieldFromFetchedDataForSendBackDatabase])

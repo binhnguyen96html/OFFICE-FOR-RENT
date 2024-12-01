@@ -10,9 +10,15 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             }),
             keepUnusedDataFor: 5,
         }),
-        getUsersWithAssginedBuilding: builder.query({
+        getUsersWithAssignedBuilding: builder.query({
             query: ({buildingId}) => ({
                 url:`${USER_URL}/assigned-staffs/${buildingId}`
+            }),
+            keepUnusedDataFor: 5,
+        }),
+        getUsersWithAssignedCustomer: builder.query({
+            query: ({customerId}) => ({
+                url:`${USER_URL}/assigned-staffs-to-customer/${customerId}`
             }),
             keepUnusedDataFor: 5,
         }),
@@ -29,6 +35,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetUsersQuery,
-    useLazyGetUsersWithAssginedBuildingQuery,
+    useLazyGetUsersWithAssignedBuildingQuery,
+    useLazyGetUsersWithAssignedCustomerQuery,
     useUpdateAssignStaffToBuildingMutation
 } = usersApiSlice;

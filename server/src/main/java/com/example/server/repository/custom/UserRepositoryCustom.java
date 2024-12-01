@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface UserRepositoryCustom {
     List<UserEntity> findAssignedStaffs_ByBuildingId(Long buildingId);
+    List<UserEntity> findAssignedStaffs_ByCustomerId(Long customerId);
 }

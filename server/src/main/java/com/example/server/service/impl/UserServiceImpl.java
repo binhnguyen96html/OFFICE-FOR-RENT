@@ -41,4 +41,16 @@ public class UserServiceImpl implements UserService {
 
         return assignedStaffs;
     }
+
+    @Override
+    public List<UserDTO> findAllUser_withAssignedCustomerStatus(Long customerId) {
+        Set<Long> assignedStaffs_Ids = userRepositoryCustom.findAssignedStaffs_ByCustomerId(customerId)
+                .stream().map(UserEntity::getId).collect(Collectors.toSet());
+        List<UserEntity> allStaffs = userRepository.findAll();
+        List<UserDTO> assignedStaffs = allStaffs.stream()
+                .map(u -> userConverter.converterToDTO_withAssignedCustomerChecked(u, assignedStaffs_Ids))
+                .collect(Collectors.toList());
+
+        return assignedStaffs;
+    }
 }

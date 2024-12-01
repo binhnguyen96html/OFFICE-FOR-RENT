@@ -5,11 +5,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
 import HomePage from "./screens/HomePage";
-import RentManagement from "./screens/RentManagement";
+import BuildingManagement from "./screens/BuildingManagement";
 import {Provider} from "react-redux";
 import store from "./store/store";
 import NewBuildingScreen from "./screens/NewBuildingScreen";
 import EditBuildingScreen from "./screens/EditBuildingScreen";
+import CustomerManagement from "./screens/CustomerManagement";
+import NewCustomerScreen from "./screens/NewCustomerScreen";
+import EditCustomerScreen from "./screens/EditCustomerScreen";
 
 
 const root = ReactDOM.createRoot(
@@ -20,9 +23,12 @@ const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/' element={<App/>}>
             <Route index={true} path='/' element={<HomePage/>}/>
-            <Route path='/rent-management' element={<RentManagement/>}/>
-            <Route path='/rent-management/new-building' element={<NewBuildingScreen />} />
-            <Route path='/rent-management/:id/edit' element={<EditBuildingScreen />} />
+            <Route path='/building-management' element={<BuildingManagement/>}/>
+            <Route path='/building-management/new-building' element={<NewBuildingScreen />} />
+            <Route path='/building-management/:id/edit' element={<EditBuildingScreen />} />
+            <Route path='/customer-management' element={<CustomerManagement/>} />
+            <Route path='/customer-management/new-customer' element={<NewCustomerScreen/>} />
+            <Route path='/customer-management/edit/:id' element={<EditCustomerScreen/>} />
         </Route>
     )
 );

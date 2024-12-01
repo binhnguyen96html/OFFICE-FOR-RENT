@@ -25,4 +25,13 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .setParameter("buildingId", buildingId)
                 .getResultList();
     }
+
+    @Override
+    public List<UserEntity> findAssignedStaffs_ByCustomerId(Long customerId) {
+        String sql = "SELECT u FROM UserEntity u JOIN u.customers4 c WHERE c.id = :customerId";
+
+        return entityManager.createQuery(sql, UserEntity.class)
+                .setParameter("customerId", customerId)
+                .getResultList();
+    }
 }

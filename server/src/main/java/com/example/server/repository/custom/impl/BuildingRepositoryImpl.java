@@ -55,7 +55,6 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         }
         //System.out.println("Building Types: " + buildingTypes.size());
 
-
         buildSpecialQuery(params, buildingTypes, whereQuery, joinQuery);
         buildNormalQuery(params, whereQuery);
         finalQuery.append(joinQuery).append(SystemConstant.ONE_EQUAL_ONE).append(whereQuery)

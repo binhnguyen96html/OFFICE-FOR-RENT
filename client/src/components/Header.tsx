@@ -31,13 +31,13 @@ const Header = () => {
                             </p>
                         </Link>
 
-                        <Link to="/rent-management">
+                        <Link to="/building-management">
                             <p className="hover:text-cyan-500 duration-75 transition-colors">
-                                Rent Management
+                                Building Management
                             </p>
                         </Link>
 
-                        <Link to="/products-list-page">
+                        <Link to="/customer-management">
                             <p className="hover:text-cyan-500 duration-75 transition-colors">
                                 Customer Management
                             </p>

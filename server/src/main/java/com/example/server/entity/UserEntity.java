@@ -32,6 +32,9 @@ public class UserEntity extends BaseEntity {
     @ManyToMany(mappedBy = "users3")
     private List<BuildingEntity> building3 = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "users4")
+    private List<CustomerEntity> customers4 = new ArrayList<>();
+
     public String getUsername() {
         return username;
     }
@@ -86,5 +89,13 @@ public class UserEntity extends BaseEntity {
 
     public void setBuilding3(List<BuildingEntity> building3) {
         this.building3 = building3;
+    }
+
+    public List<CustomerEntity> getCustomers4() {
+        return customers4;
+    }
+
+    public void setCustomers4(List<CustomerEntity> customers4) {
+        this.customers4 = customers4;
     }
 }
